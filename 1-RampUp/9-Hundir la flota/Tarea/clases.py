@@ -10,6 +10,7 @@ from variables import(
     fallo
 )
 
+
 class Tablero:
 
     def __init__(self, jugador):
@@ -39,11 +40,11 @@ class Tablero:
             # Eslora = 2 (3 barcos)
             [(4, 0), (4, 1)],
             [(6, 0), (6, 1)],
-            [(8, 3), (8, 4)],
+            [(8, 0), (9, 0)],
 
             # Eslora = 3 (2 barcos)
             [(2, 0), (2, 1), (2, 2)],
-            [(9, 5), (9, 6), (9, 7)],
+            [(1, 0), (1, 1), (1, 2)],
 
             # Eslora = 4 (1 barco)
             [(0, 0), (0, 1), (0, 2), (0, 3)]
@@ -53,4 +54,18 @@ class Tablero:
             for fila, columna in itsasontzi:
                 self.tablero[fila][columna] = barco
 
-    
+    def disparar(self, fila, columna):
+        
+        casilla = self.tablero[fila][columna]
+
+        if casilla == impacto or casilla == fallo:
+            return "Ya has disparado ahí. "
+
+        elif casilla == barco:
+            self.tablero[fila][columna] = barco
+            self.barcos_restantes -= 1
+            return "Le has dado!"
+
+        elif casilla == agua:
+            self.tablero[fila][columna] = fallo
+            return "Agua :( "
