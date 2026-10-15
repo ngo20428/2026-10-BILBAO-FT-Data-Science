@@ -1,4 +1,5 @@
 # CLASES
+import pprint
 
 from variables import(
     filas,
@@ -54,18 +55,34 @@ class Tablero:
             for fila, columna in itsasontzi:
                 self.tablero[fila][columna] = barco
 
+
+    
     def disparar(self, fila, columna):
-        
-        casilla = self.tablero[fila][columna]
-
-        if casilla == impacto or casilla == fallo:
-            return "Ya has disparado ahí. "
-
-        elif casilla == barco:
-            self.tablero[fila][columna] = barco
+        ''' Comprobamos que las coordenadas introducidas son válidas (es decir, que están dentro del tablero).'''
+        if not (0 <= fila < filas and 0 <= columna < columnas):
+            return "Error. Las coordenadas tienen que estar entre 0 y 9."
+    
+        # Comprobar si ya se había disparado en dicha coordenada
+        if self.tablero[fila][columna] == fallo or self.tablero[fila][columna] == impacto:
+            return "Ya has disparado ahí."
+    
+        # Si hemos dado a un barco:
+        if self.tablero[fila][columna] == barco:
+            self.tablero[fila][columna] = impacto
             self.barcos_restantes -= 1
-            return "Le has dado!"
-
-        elif casilla == agua:
+            return "¡Le has dado!"
+    
+        # Si no, hemos dado a aguaa
+        if self.tablero[fila][columna] == agua:
             self.tablero[fila][columna] = fallo
-            return "Agua :( "
+            return "Agua :("
+
+    def registrar_disparo(self, fila, columna, resultado):
+        if resultado == "impacto":
+            self.tablero_disparos[fila][columna] = impacto
+        else:
+            self.tablero_disparos[fila][columna] = fallo
+
+    def mostrar_tablero(self, tablero=None):
+    # Si no se indica otro tablero, mostramos el propio if tablero is None: tablero = self.tablero
+        pprint.pprint(tablero)
