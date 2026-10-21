@@ -1,7 +1,7 @@
 # MAIN
 
 from variables import *
-from clases import *
+from clases1 import *
 from funciones1 import *
 import time
 
@@ -72,6 +72,9 @@ def main():
                 time.sleep(3)
                 break
 
+        if maquina.barcos_restantes == 0:
+            break
+        
         # Bucle para el turno de la máquina:
         while True:
             print()

@@ -22,81 +22,42 @@ class Tablero:
 
         self.colocar_barcos()
 
-    
+
     def colocar_barcos(self):
-
+        """Coloca todos los barcos definidos en barcos_dict de forma aleatoria y aislada."""
         self.itsasontzis = [] # Es la lista de los barcos colocados
-
-        for eslora, cantidad in barcos_dict.items():
-            # Colocamos todos los barcos de cada eslora
+        
+        # Es mejor colocar primero los barcos más grandes (4, 3, 2, 1) para evitar quedarnos sin espacio
+        for eslora in sorted(barcos_dict.keys(), reverse=True):
+            cantidad = barcos_dict[eslora]
+            
             for i in range(cantidad):
-                colocado = False # Por defecto no están colocados
+                colocado = False
+                
                 while not colocado:
-                    # Elegimos la posición y orientación aleatoriamente
-                    fila = random.randint(0, filas - 1)
-                    columna = random.randint(0, columnas -1)
+                    # Elegimos posición y orientación al azar
                     orientacion = random.choice(["H", "V"])
+                    fila_aleatoria = random.randint(0, filas - 1)
+                    col_aleatoria = random.randint(0, columnas - 1)
 
-                    posiciones = [] # Lo que va a ocupar el barco
-
-                    for long in range(eslora):
-                        '''Calculamos las casillas que ocupa el barco.
-                        Si la orientación es horizontal --> el número de fila se mantiene igual pero vamos sumando el índice
-                                                        de posición a la columna.
-                                                        Adb. si la col. random es 2 y el barco es eslora 3: 2+0, 2+1, 2+2
-                        En cambio, si la orientación es vertical --> el nº de fila es el que cambia, y la col se mantiene ='''
+                    posiciones = []
+                    
+                    # Si la posición es válida, lo pintamos en el tablero
+                    if self.es_posicion_valida(fila_aleatoria, col_aleatoria, eslora, orientacion):
                         if orientacion == "H":
-                            posiciones.append((fila, columna + long))
-                        else:
-                            posiciones.append((fila + long, columna))
+                            for c in range(col_aleatoria, col_aleatoria + eslora):
+                                self.tablero_propio[fila_aleatoria][c] = barco
+                                posiciones.append((fila_aleatoria, c))
 
-                    # Comprobamos si todas las posiciones del barco están dentro del tablero:
-                    cabe = all(0 <= ilara < filas and 0 <= zutabe < columnas
-                               for ilara, zutabe in posiciones)
+                        else: # Vertical
+                            for r in range(fila_aleatoria, fila_aleatoria + eslora):
+                                self.tablero_propio[r][col_aleatoria] = barco
+                                posiciones.append((r, col_aleatoria))
 
-
-                    # Comprobamos ahora si el tablero está libre.
-                    # Consideramos que el tablero está libre para posicionar el barco si:
-                        # 1. El barco cabe
-                        # 2. Hay agua en dicha posición, es decir, no hay un barco ya puesto.
-                    if cabe:
-                        alrededor = self.casillas_alrededor(posiciones)
-
-                        libre = True
-
-                        for f, c in alrededor:
-                            if self.tablero_propio[f][c] != agua:
-                                libre = False
-                                break
-                    else:
-                        libre = False
-
-                    if libre:
-                        # Colocamos el barco
-                        for ilara, zutabe in posiciones:
-                            self.tablero_propio[ilara][zutabe] = barco
-                        
-                        # Guardamos las posiciones de cada barco en una lista (esto nos ayuda luego para declarar cuando un barco está hundido)
                         self.itsasontzis.append(set(posiciones))
-                        colocado = True
-
-                    else:
-                        continue
-
-    def casillas_alrededor(self, posiciones):
-        alrededor = set()
-
-        for fila, columna in posiciones:
-            for df in (-1, 0, 1):
-                for dc in (-1, 0, 1):
-                    vecina_fila = fila + df
-                    vecina_columna = columna + dc
-
-                    if (0 <= vecina_fila < filas
-                            and 0 <= vecina_columna < columnas):
-                        alrededor.add((vecina_fila, vecina_columna))
-
-        return alrededor
+                        
+                        colocado = True # Rompe el bucle while y pasa al siguiente barco
+    
 
     def recibir_disparo(self, fila, columna):
         
