@@ -3,6 +3,7 @@
 from variables import *
 from clases import *
 from funciones1 import *
+import time
 
 def main():
 
@@ -28,6 +29,7 @@ def main():
         while True:
             print("Te toca :)")
             print()
+            time.sleep(3)
             print("Tu tablero:")
             mostrar_tablero(jugador.tablero_propio)
             print(f'Tus barcos restantes: {jugador.barcos_restantes}')
@@ -36,6 +38,9 @@ def main():
             mostrar_tablero(jugador.tablero_disparos)
             print(f'Barcos restantes de la máquina: {maquina.barcos_restantes}')
 
+            mostrar_tablero(maquina.tablero_propio)
+
+            time.sleep(2)
             print("¿Dónde atacamos, capitán?")
             fila, columna = coordenadas()
 
@@ -51,9 +56,11 @@ def main():
 
                 if hundido:
                     print("¡Tocado y hundido! :)")
+                    time.sleep(3)
 
                 else:
                     print("¡Le has dado! Buena puntería, capitán ;)")
+                    time.sleep(2)
 
                 if maquina.barcos_restantes == 0:
                     break
@@ -62,10 +69,12 @@ def main():
 
             else:
                 print("¡Agua! :( Ahora le toca a la máquina.")
+                time.sleep(3)
                 break
 
         # Bucle para el turno de la máquina:
         while True:
+            print()
             print("Turno de la máquina")
 
             while True:
@@ -74,6 +83,8 @@ def main():
                 if not maquina.disparo_repe(fila, columna):
                     break
 
+            print(f'Ha disparado en {fila, columna}.')
+            
             resultado, hundido = jugador.recibir_disparo(fila, columna)
             maquina.registrar_disparo(fila, columna, resultado)
 
