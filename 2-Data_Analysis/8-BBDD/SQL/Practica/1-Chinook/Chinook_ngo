@@ -62,10 +62,18 @@ SELECT COUNT(InvoiceId)
 FROM invoices
 WHERE InvoiceDate LIKE '%2009%' or InvoiceDate LIKE '%2011%';
 
+SELECT COUNT(InvoiceId)
+FROM invoices
+WHERE strftime("%Y", InvoiceDate) = "2009" or strftime("%Y", InvoiceDate) = "2011";
+
 -- 13. Cuántas facturas ha habido entre 2009 y 2011
 SELECT COUNT(InvoiceId)
 FROM invoices
 WHERE InvoiceDate BETWEEN "2009-01-01" AND "2011-12-31";
+
+SELECT COUNT(InvoiceId)
+FROM invoices
+WHERE strftime("%Y", InvoiceDate) >= "2009" or strftime("%Y", InvoiceDate) <= "2011";
 
 -- 14. Cuántas clientes hay de España y de Brasil
 SELECT COUNT(CustomerId)
@@ -122,13 +130,13 @@ JOIN invoices on invoices.CustomerId = customers.CustomerId
 GROUP BY employees.EmployeeId;
 
 -- 8. ¿Quién ha sido el agente de ventas que más ha vendido en 2009?
-SELECT employees.EmployeeId, employees.FirstName, employees.LastName, SUM(invoices.Total)
+SELECT employees.EmployeeId, employees.FirstName, employees.LastName, SUM(invoices.Total) AS Total
 FROM employees
 JOIN customers on customers.SupportRepId = employees.EmployeeId
 JOIN invoices on invoices.CustomerId = customers.CustomerId
 WHERE invoices.InvoiceDate LIKE "%2009%"
 GROUP BY employees.EmployeeId
-ORDER BY invoices.Total DESC
+ORDER BY Total DESC
 LIMIT 1;
 
 -- 9. ¿Cuáles son los 3 grupos que más han vendido?
